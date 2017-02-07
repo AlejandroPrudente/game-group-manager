@@ -1,6 +1,6 @@
 ﻿@model GameGroupManager.Models.SendCodeViewModel
 @{
-    ViewBag.Title = "Envoyer";
+    ViewBag.Title = "Send";
 }
 
 <h2>@ViewBag.Title.</h2>
@@ -12,9 +12,9 @@
     <hr />
     <div class="row">
         <div class="col-md-8">
-            Sélectionner le fournisseur d'authentification à 2 facteurs :
+            Select the two-factor authentification supplier:
             @Html.DropDownListFor(model => model.SelectedProvider, Model.Providers)
-            <input type="submit" value="Envoyer" class="btn btn-default" />
+            <input type="submit" value="Send" class="btn btn-default" />
         </div>
     </div>
 }

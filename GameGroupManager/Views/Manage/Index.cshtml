@@ -1,32 +1,32 @@
 ﻿@model GameGroupManager.Models.IndexViewModel
 @{
-    ViewBag.Title = "Gérer";
+    ViewBag.Title = "Manage";
 }
 
 <h2>@ViewBag.Title.</h2>
 
 <p class="text-success">@ViewBag.StatusMessage</p>
 <div>
-    <h4>Changer les paramètres de votre compte</h4>
+    <h4>Change your account parameters</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>Mot de passe :</dt>
+        <dt>Password:</dt>
         <dd>
             [
             @if (Model.HasPassword)
             {
-                @Html.ActionLink("Changer votre mot de passe", "ChangePassword")
+                @Html.ActionLink("Change your password", "ChangePassword")
             }
             else
             {
-                @Html.ActionLink("Créer", "SetPassword")
+                @Html.ActionLink("Create", "SetPassword")
             }
             ]
         </dd>
-        <dt>Connexions externes :</dt>
+        <dt>External connections:</dt>
         <dd>
             @Model.Logins.Count [
-            @Html.ActionLink("Gérer", "ManageLogins") ]
+            @Html.ActionLink("Manage", "ManageLogins") ]
         </dd>
         @*
             Les numéros de téléphone peuvent servir de second facteur de vérification dans un système d'authentification à 2 facteurs.
@@ -56,19 +56,19 @@
                 }
             </dd>
         *@
-        <dt>Authentification à 2 facteurs :</dt>
+        <dt>Two-factor authentication:</dt>
         <dd>
-            <p>
-                Il n'existe aucun fournisseur d'authentification à 2 facteurs configuré. Consultez <a href="http://go.microsoft.com/fwlink/?LinkId=403804">cet article</a>
-                pour des détails sur la configuration de cette application ASP.NET en vue de la prise en charge de l'authentification à 2 facteurs.
-            </p>
+	        <p>
+		        There is no configured two-factor authentification supplier. See <a href="http://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+				for the configuration details of this ASP.NET application.
+			</p>
             @*@if (Model.TwoFactor)
                 {
                     using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                     {
                         @Html.AntiForgeryToken()
-                        <text>Activé
-                        <input type="submit" value="Désactiver" class="btn btn-link" />
+                        <text>Activated
+                        <input type="submit" value="Disabled" class="btn btn-link" />
                         </text>
                     }
                 }
@@ -77,8 +77,8 @@
                     using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                     {
                         @Html.AntiForgeryToken()
-                        <text>Désactivé
-                        <input type="submit" value="Activer" class="btn btn-link" />
+                        <text>Disabled
+                        <input type="submit" value="Activate" class="btn btn-link" />
                         </text>
                     }
                 }*@
