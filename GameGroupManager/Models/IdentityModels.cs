@@ -29,5 +29,7 @@ namespace GameGroupManager.Models
         {
             return new ApplicationDbContext();
         }
+
+		public DbSet<GgmUser> GgmUsers { get; set; }
     }
 }

@@ -55,13 +55,13 @@ namespace GameGroupManager.Controllers
         public async Task<ActionResult> Index(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "Votre mot de passe a été changé."
-                : message == ManageMessageId.SetPasswordSuccess ? "Votre mot de passe a été défini."
-                : message == ManageMessageId.SetTwoFactorSuccess ? "Votre fournisseur d'authentification à 2 facteurs a été défini."
-                : message == ManageMessageId.Error ? "Une erreur s'est produite."
-                : message == ManageMessageId.AddPhoneSuccess ? "Votre numéro de téléphone a été ajouté."
-                : message == ManageMessageId.RemovePhoneSuccess ? "Votre numéro de téléphone a été supprimé."
-                : "";
+                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
+                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
+                : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor provider has been set."
+                : message == ManageMessageId.Error ? "An error has occured."
+                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number has been added."
+                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number has been deleted."
+				: "";
 
             var userId = User.Identity.GetUserId();
             var model = new IndexViewModel
@@ -123,7 +123,7 @@ namespace GameGroupManager.Controllers
                 var message = new IdentityMessage
                 {
                     Destination = model.Number,
-                    Body = "Votre code de sécurité est : " + code
+                    Body = "Your security code is: " + code
                 };
                 await UserManager.SmsService.SendAsync(message);
             }
@@ -190,7 +190,7 @@ namespace GameGroupManager.Controllers
                 return RedirectToAction("Index", new { Message = ManageMessageId.AddPhoneSuccess });
             }
             //Si nous sommes arrivés là, quelque chose a échoué, réafficher le formulaire
-            ModelState.AddModelError("", "La vérification du téléphone a échoué");
+            ModelState.AddModelError("", "Telephone verification has failed");
             return View(model);
         }
 
@@ -281,9 +281,9 @@ namespace GameGroupManager.Controllers
         public async Task<ActionResult> ManageLogins(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
-                message == ManageMessageId.RemoveLoginSuccess ? "La connexion externe a été supprimée."
-                : message == ManageMessageId.Error ? "Une erreur s'est produite."
-                : "";
+                message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
+				: message == ManageMessageId.Error ? "An error has occured."
+				: "";
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user == null)
             {

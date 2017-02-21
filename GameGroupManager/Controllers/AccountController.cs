@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -9,6 +10,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using GameGroupManager.Models;
+using GameGroupManager.Services;
 
 namespace GameGroupManager.Controllers
 {
@@ -155,6 +157,8 @@ namespace GameGroupManager.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+					var service = new GgmService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
+					service.CreateGgmUser(model.Email, model.FirstName, model.LastName, user.Id);
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // Pour plus d'informations sur l'activation de la confirmation du compte et la réinitialisation du mot de passe, consultez http://go.microsoft.com/fwlink/?LinkID=320771
@@ -373,8 +377,14 @@ namespace GameGroupManager.Controllers
                 {
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
-                    {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+					{
+						var service = new GgmService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
+						int nameCount = info.ExternalIdentity.Name.Split(' ').Length;
+						var firstName = nameCount > 0 ? info.ExternalIdentity.Name.Split(' ')[0] : info.DefaultUserName;
+						var lastName = nameCount > 1 ? info.ExternalIdentity.Name.Split(' ')[nameCount - 1] : string.Empty;
+						service.CreateGgmUser(model.Email, firstName, lastName, user.Id);
+
+						await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                         return RedirectToLocal(returnUrl);
                     }
                 }
