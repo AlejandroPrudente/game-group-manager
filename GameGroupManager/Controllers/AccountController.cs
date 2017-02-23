@@ -163,6 +163,7 @@ namespace GameGroupManager.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+	                UserManager.AddClaim(user.Id, new Claim(ClaimTypes.GivenName, $"{model.FirstName} {model.LastName}"));
 					var service = new GgmService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
 					service.CreateGgmUser(model.Email, model.FirstName, model.LastName, user.Id);
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
@@ -392,6 +393,7 @@ namespace GameGroupManager.Controllers
 						var service = new GgmService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
 						var firstName = info.ExternalIdentity.FindFirstValue(ClaimTypes.GivenName) ?? info.DefaultUserName;
 						var lastName = info.ExternalIdentity.FindFirstValue(ClaimTypes.Surname) ?? string.Empty;
+						UserManager.AddClaim(user.Id, new Claim(ClaimTypes.GivenName, $"{firstName} {lastName}"));
 						service.CreateGgmUser(model.Email, firstName, lastName, user.Id);
 
 						await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);

@@ -67,7 +67,7 @@ namespace GameGroupManager
 
             // Inscrire les fournisseurs d'authentification à 2 facteurs. Cette application utilise le téléphone et les e-mails comme procédure de réception de code pour confirmer l'utilisateur
             // Vous pouvez écrire votre propre fournisseur et le connecter ici.
-            manager.RegisterTwoFactorProvider("Code téléphonique ", new PhoneNumberTokenProvider<ApplicationUser>
+            manager.RegisterTwoFactorProvider("SMS code ", new PhoneNumberTokenProvider<ApplicationUser>
             {
                 MessageFormat = "Your security code is {0}"
             });

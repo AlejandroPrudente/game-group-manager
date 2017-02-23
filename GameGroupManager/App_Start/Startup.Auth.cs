@@ -64,9 +64,9 @@ namespace GameGroupManager
 			var facebookOptions = new FacebookAuthenticationOptions
 			{
 				AppId = "625040680953967",
-				AppSecret = "93252fd81a19777f24048f5181d24eff"
-				, Scope = { "public_profile", "email"}
-				, Provider = new FacebookAuthenticationProvider()// new OAuthEvents
+				AppSecret = "93252fd81a19777f24048f5181d24eff",
+				Scope = { "public_profile", "email"},
+				Provider = new FacebookAuthenticationProvider()
 				{
 					OnAuthenticated = context =>
 					{

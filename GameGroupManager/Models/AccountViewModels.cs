@@ -8,10 +8,6 @@ namespace GameGroupManager.Models
         [Required]
         [Display(Name = "Email address")]
         public string Email { get; set; }
-
-		//[Required]
-		//[Display(Name = "User name")]
-		//public string UserName { get; set; }
     }
 
     public class ExternalLoginListViewModel
