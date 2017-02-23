@@ -13,6 +13,9 @@ namespace GameGroupManager
 		{
 			routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+			//to use attribute routing, uncomment the following line
+			//routes.MapMvcAttributeRoutes();
+
 			routes.MapRoute(
 				name: "Default",
 				url: "{controller}/{action}/{id}",

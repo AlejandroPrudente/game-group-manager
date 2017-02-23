@@ -6,7 +6,7 @@ namespace GameGroupManager.Models
     public class ExternalLoginConfirmationViewModel
     {
         [Required]
-        [Display(Name = "Courrier électronique")]
+        [Display(Name = "Email address")]
         public string Email { get; set; }
     }
 
@@ -33,7 +33,7 @@ namespace GameGroupManager.Models
         public string Code { get; set; }
         public string ReturnUrl { get; set; }
 
-        [Display(Name = "Mémoriser ce navigateur ?")]
+        [Display(Name = "Remember this browser?")]
         public bool RememberBrowser { get; set; }
 
         public bool RememberMe { get; set; }
@@ -42,42 +42,48 @@ namespace GameGroupManager.Models
     public class ForgotViewModel
     {
         [Required]
-        [Display(Name = "Courrier électronique")]
+        [Display(Name = "Email address")]
         public string Email { get; set; }
     }
 
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Courrier électronique")]
+        [Display(Name = "Email address")]
         [EmailAddress]
         public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Mot de passe")]
+        [Display(Name = "Password")]
         public string Password { get; set; }
 
-        [Display(Name = "Mémoriser le mot de passe ?")]
+        [Display(Name = "Remember this password?")]
         public bool RememberMe { get; set; }
     }
 
     public class RegisterViewModel
-    {
-        [Required]
+	{
+		[Display(Name = "First name")]
+		public string FirstName { get; set; }
+
+		[Display(Name = "Last name")]
+		public string LastName { get; set; }
+
+		[Required]
         [EmailAddress]
-        [Display(Name = "Courrier électronique")]
+        [Display(Name = "Email address")]
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "La chaîne {0} doit comporter au moins {2} caractères.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "The {0} must have at least {2} characters.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Mot de passe")]
+        [Display(Name = "Password")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirmer le mot de passe ")]
-        [Compare("Password", ErrorMessage = "Le mot de passe et le mot de passe de confirmation ne correspondent pas.")]
+        [Display(Name = "Confirm the password ")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password are not the same.")]
         public string ConfirmPassword { get; set; }
     }
 
@@ -85,18 +91,18 @@ namespace GameGroupManager.Models
     {
         [Required]
         [EmailAddress]
-        [Display(Name = "Courrier électronique")]
+        [Display(Name = "Email address")]
         public string Email { get; set; }
 
         [Required]
-        [StringLength(100, ErrorMessage = "La chaîne {0} doit comporter au moins {2} caractères.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "The {0} must have at least {2} characters.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        [Display(Name = "Mot de passe")]
+        [Display(Name = "Password")]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
-        [Display(Name = "Confirmer le mot de passe")]
-        [Compare("Password", ErrorMessage = "Le nouveau mot de passe et le mot de passe de confirmation ne correspondent pas.")]
+        [Display(Name = "Confirm the password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password are not the same.")]
         public string ConfirmPassword { get; set; }
 
         public string Code { get; set; }

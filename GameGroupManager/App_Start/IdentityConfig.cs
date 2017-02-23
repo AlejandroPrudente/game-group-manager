@@ -54,10 +54,10 @@ namespace GameGroupManager
             manager.PasswordValidator = new PasswordValidator
             {
                 RequiredLength = 6,
-                RequireNonLetterOrDigit = true,
-                RequireDigit = true,
-                RequireLowercase = true,
-                RequireUppercase = true,
+                RequireNonLetterOrDigit = false,
+                RequireDigit = false,
+                RequireLowercase = false,
+                RequireUppercase = false,
             };
 
             // Configurer les valeurs par défaut du verrouillage de l'utilisateur
@@ -67,15 +67,15 @@ namespace GameGroupManager
 
             // Inscrire les fournisseurs d'authentification à 2 facteurs. Cette application utilise le téléphone et les e-mails comme procédure de réception de code pour confirmer l'utilisateur
             // Vous pouvez écrire votre propre fournisseur et le connecter ici.
-            manager.RegisterTwoFactorProvider("Code téléphonique ", new PhoneNumberTokenProvider<ApplicationUser>
+            manager.RegisterTwoFactorProvider("SMS code ", new PhoneNumberTokenProvider<ApplicationUser>
             {
-                MessageFormat = "Votre code de sécurité est {0}"
+                MessageFormat = "Your security code is {0}"
             });
-            manager.RegisterTwoFactorProvider("Code d'e-mail", new EmailTokenProvider<ApplicationUser>
+            manager.RegisterTwoFactorProvider("Email code", new EmailTokenProvider<ApplicationUser>
             {
-                Subject = "Code de sécurité",
-                BodyFormat = "Votre code de sécurité est {0}"
-            });
+                Subject = "Security code",
+                BodyFormat = "Your security code is {0}"
+			});
             manager.EmailService = new EmailService();
             manager.SmsService = new SmsService();
             var dataProtectionProvider = options.DataProtectionProvider;

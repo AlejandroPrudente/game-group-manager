@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -9,6 +10,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using GameGroupManager.Models;
+using GameGroupManager.Services;
 
 namespace GameGroupManager.Controllers
 {
@@ -28,7 +30,7 @@ namespace GameGroupManager.Controllers
             SignInManager = signInManager;
         }
 
-        public ApplicationSignInManager SignInManager
+	    public ApplicationSignInManager SignInManager
         {
             get
             {
@@ -56,8 +58,8 @@ namespace GameGroupManager.Controllers
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
-        {
-            ViewBag.ReturnUrl = returnUrl;
+		{
+			ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
@@ -155,6 +157,9 @@ namespace GameGroupManager.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+	                UserManager.AddClaim(user.Id, new Claim(ClaimTypes.GivenName, $"{model.FirstName} {model.LastName}"));
+					var service = new GgmService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
+					service.CreateGgmUser(model.Email, model.FirstName, model.LastName, user.Id);
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // Pour plus d'informations sur l'activation de la confirmation du compte et la réinitialisation du mot de passe, consultez http://go.microsoft.com/fwlink/?LinkID=320771
@@ -343,7 +348,8 @@ namespace GameGroupManager.Controllers
                     // Si l'utilisateur n'a pas de compte, invitez alors celui-ci à créer un compte
                     ViewBag.ReturnUrl = returnUrl;
                     ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
+					//var firstName = loginInfo.ExternalIdentity.FindFirstValue(ClaimTypes.GivenName) ?? loginInfo.DefaultUserName;
+					return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
             }
         }
 
@@ -359,7 +365,11 @@ namespace GameGroupManager.Controllers
                 return RedirectToAction("Index", "Manage");
             }
 
-            if (ModelState.IsValid)
+			//var errors = ModelState.Where(x => x.Value.Errors.Any())
+			//	.Select(x => new { x.Key, x.Value.Errors }).ToList();
+			//errors = errors;
+
+			if (ModelState.IsValid)
             {
                 // Obtenez des informations sur l’utilisateur auprès du fournisseur de connexions externe
                 var info = await AuthenticationManager.GetExternalLoginInfoAsync();
@@ -373,8 +383,14 @@ namespace GameGroupManager.Controllers
                 {
                     result = await UserManager.AddLoginAsync(user.Id, info.Login);
                     if (result.Succeeded)
-                    {
-                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+					{
+						var service = new GgmService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
+						var firstName = info.ExternalIdentity.FindFirstValue(ClaimTypes.GivenName) ?? info.DefaultUserName;
+						var lastName = info.ExternalIdentity.FindFirstValue(ClaimTypes.Surname) ?? string.Empty;
+						UserManager.AddClaim(user.Id, new Claim(ClaimTypes.GivenName, $"{firstName} {lastName}"));
+						service.CreateGgmUser(model.Email, firstName, lastName, user.Id);
+
+						await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                         return RedirectToLocal(returnUrl);
                     }
                 }
@@ -382,16 +398,16 @@ namespace GameGroupManager.Controllers
             }
 
             ViewBag.ReturnUrl = returnUrl;
-            return View(model);
-        }
+			return View("ExternalLoginConfirmation", model);
+		}
 
-        //
-        // POST: /Account/LogOff
-        [HttpPost]
+		//
+		// POST: /Account/LogOff
+		[HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+			AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }
 
