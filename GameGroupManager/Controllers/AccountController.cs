@@ -30,12 +30,6 @@ namespace GameGroupManager.Controllers
             SignInManager = signInManager;
         }
 
-	    //public void PrepareUserName()
-	    //{
-		   // var service = new GgmService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
-		   // ViewBag.UserName = service.GetGgmUserName(User.Identity.GetUserName());
-	    //}
-
 	    public ApplicationSignInManager SignInManager
         {
             get

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Facebook;
@@ -63,8 +64,8 @@ namespace GameGroupManager
 
 			var facebookOptions = new FacebookAuthenticationOptions
 			{
-				AppId = "625040680953967",
-				AppSecret = "93252fd81a19777f24048f5181d24eff",
+				AppId = ConfigurationManager.AppSettings["FacebookAppId"],
+				AppSecret = ConfigurationManager.AppSettings["FacebookAppSecret"],
 				Scope = { "public_profile", "email"},
 				Provider = new FacebookAuthenticationProvider()
 				{
@@ -86,11 +87,13 @@ namespace GameGroupManager
 			//question having the same problem I'm having: http://stackoverflow.com/questions/41542166/web-api-2-oauth-user-profile-information
 			//good walkthrough, it seems: http://www.zainrizvi.io/2016/03/24/create-site-with-facebook-login-using-asp.net-core/
 
-			//app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-			//{
-			//    ClientId = "",
-			//    ClientSecret = ""
-			//});
+			app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+			{
+				ClientId = ConfigurationManager.AppSettings["GoogleClientId"],
+				ClientSecret = ConfigurationManager.AppSettings["GoogleClientSecret"]
+			});
+
+			//https://docs.microsoft.com/en-us/aspnet/identity/overview/features-api/best-practices-for-deploying-passwords-and-other-sensitive-data-to-aspnet-and-azure
 		}
 	}
 }
