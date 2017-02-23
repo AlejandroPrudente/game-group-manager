@@ -30,7 +30,13 @@ namespace GameGroupManager.Controllers
             SignInManager = signInManager;
         }
 
-        public ApplicationSignInManager SignInManager
+	    //public void PrepareUserName()
+	    //{
+		   // var service = new GgmService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
+		   // ViewBag.UserName = service.GetGgmUserName(User.Identity.GetUserName());
+	    //}
+
+	    public ApplicationSignInManager SignInManager
         {
             get
             {
@@ -58,8 +64,8 @@ namespace GameGroupManager.Controllers
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
-        {
-            ViewBag.ReturnUrl = returnUrl;
+		{
+			ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
@@ -347,7 +353,8 @@ namespace GameGroupManager.Controllers
                     // Si l'utilisateur n'a pas de compte, invitez alors celui-ci à créer un compte
                     ViewBag.ReturnUrl = returnUrl;
                     ViewBag.LoginProvider = loginInfo.Login.LoginProvider;
-                    return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
+					//var firstName = loginInfo.ExternalIdentity.FindFirstValue(ClaimTypes.GivenName) ?? loginInfo.DefaultUserName;
+					return View("ExternalLoginConfirmation", new ExternalLoginConfirmationViewModel { Email = loginInfo.Email });
             }
         }
 
@@ -363,7 +370,11 @@ namespace GameGroupManager.Controllers
                 return RedirectToAction("Index", "Manage");
             }
 
-            if (ModelState.IsValid)
+			//var errors = ModelState.Where(x => x.Value.Errors.Any())
+			//	.Select(x => new { x.Key, x.Value.Errors }).ToList();
+			//errors = errors;
+
+			if (ModelState.IsValid)
             {
                 // Obtenez des informations sur l’utilisateur auprès du fournisseur de connexions externe
                 var info = await AuthenticationManager.GetExternalLoginInfoAsync();
@@ -379,9 +390,8 @@ namespace GameGroupManager.Controllers
                     if (result.Succeeded)
 					{
 						var service = new GgmService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
-						int nameCount = info.ExternalIdentity.Name.Split(' ').Length;
-						var firstName = nameCount > 0 ? info.ExternalIdentity.Name.Split(' ')[0] : info.DefaultUserName;
-						var lastName = nameCount > 1 ? info.ExternalIdentity.Name.Split(' ')[nameCount - 1] : string.Empty;
+						var firstName = info.ExternalIdentity.FindFirstValue(ClaimTypes.GivenName) ?? info.DefaultUserName;
+						var lastName = info.ExternalIdentity.FindFirstValue(ClaimTypes.Surname) ?? string.Empty;
 						service.CreateGgmUser(model.Email, firstName, lastName, user.Id);
 
 						await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
@@ -392,16 +402,16 @@ namespace GameGroupManager.Controllers
             }
 
             ViewBag.ReturnUrl = returnUrl;
-            return View(model);
-        }
+			return View("ExternalLoginConfirmation", model);
+		}
 
-        //
-        // POST: /Account/LogOff
-        [HttpPost]
+		//
+		// POST: /Account/LogOff
+		[HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+			AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
             return RedirectToAction("Index", "Home");
         }
 

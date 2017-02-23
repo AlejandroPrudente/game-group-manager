@@ -1,4 +1,6 @@
-﻿@using Microsoft.AspNet.Identity
+﻿@using GameGroupManager.Models
+@using GameGroupManager.Services
+@using Microsoft.AspNet.Identity
 @if (Request.IsAuthenticated)
 {
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
@@ -6,9 +8,15 @@
     @Html.AntiForgeryToken()
 
     <ul class="nav navbar-nav navbar-right">
-        <li>
-            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
-        </li>
+	    <li>
+		    @{
+				//Context.GetOwinContext().Authentication.
+				//var service = new GgmService(Context.GetOwinContext().Get<ApplicationDbContext>());//new GgmService(HttpContext.GetOwinContext().Get<ApplicationDbContext>());
+				//ViewBag.UserName = service.GetGgmUserName(User.Identity.GetUserName());
+				string userName = string.IsNullOrEmpty(ViewBag.UserName) ? User.Identity.GetUserName() : ViewBag.UserName;
+		    }
+		    @Html.ActionLink("Hello " + userName + "!", "Index", "Manage", routeValues: null, htmlAttributes: new {title = "Manage"})
+	    </li>
         <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
     </ul>
     }

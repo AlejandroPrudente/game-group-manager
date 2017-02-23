@@ -27,5 +27,11 @@ namespace GameGroupManager.Services
 			db.GgmUsers.Add(ggmUser);
 			db.SaveChanges();
 		}
+
+		public string GetGgmUserName(string email)
+		{
+			var user = db.GgmUsers.FirstOrDefault(u => u.Email == email);
+			return user?.Name ?? email;
+		}
 	}
 }

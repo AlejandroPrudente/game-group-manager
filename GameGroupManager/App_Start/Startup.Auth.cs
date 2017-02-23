@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Facebook;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
@@ -8,6 +9,7 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
 using GameGroupManager.Models;
+using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Facebook;
 
@@ -59,52 +61,30 @@ namespace GameGroupManager
 			//   consumerKey: "",
 			//   consumerSecret: "");
 
-			//http://stackoverflow.com/questions/25966530/asp-net-mvc-5-1-c-sharp-owin-facebook-authentication-or-login-ask-for-birthday
-			//var facebookOptions = new FacebookAuthenticationOptions
-			//{
-			//	Scope = { "email", "first_name", "last_name" },
-			//	AppId = "625040680953967",
-			//	AppSecret = "93252fd81a19777f24048f5181d24eff",
-			//	Provider = new FacebookAuthenticationProvider()
-			//	{
-			//		OnAuthenticated = context =>
-			//		{
-			//			context.Identity.AddClaim(new System.Security.Claims.Claim("FacebookAccessToken", context.AccessToken));
-			//			return Task.FromResult(true);
-			//		}
-			//	}
-			//};
-			//facebookOptions.SignInAsAuthenticationType = DefaultAuthenticationTypes.ExternalCookie;
-
-			//http://www.codemeworld.com/c-facebookgoogle-login-how-to-get-user-first-name-and-last-name-separately/
-			//var facebookOptions = new FacebookAuthenticationOptions
-			//{
-			//	AppId = "625040680953967",
-			//	AppSecret = "93252fd81a19777f24048f5181d24eff",
-			//	Scope = { "email", "first_name", "last_name"},
-			//	//Note that you need to explicitly specify what you need.
-			//	//UserInformationEndpoint = IdentityEnvProperties.FacebookUserInformationEndpoint,
-			//	//BackchannelHttpHandler = new FacebookBackChannelHandler(),
-			//	Provider = new FacebookAuthenticationProvider
-			//	{
-			//		OnAuthenticated = context =>
-			//		{
-			//			context.Identity.AddClaim(new Claim("FacebookAccessToken", context.AccessToken));
-			//			return Task.FromResult(true);
-			//		}
-			//	}
-			//};
-			//This line is required besides the above configuration.
-			//facebookOptions.Scope.Add("email");
-
 			var facebookOptions = new FacebookAuthenticationOptions
 			{
 				AppId = "625040680953967",
 				AppSecret = "93252fd81a19777f24048f5181d24eff"
+				, Scope = { "public_profile", "email"}
+				, Provider = new FacebookAuthenticationProvider()// new OAuthEvents
+				{
+					OnAuthenticated = context =>
+					{
+						var client = new FacebookClient(context.AccessToken);
+						dynamic info = client.Get("me", new { fields = "name,id,email,first_name,last_name" });
+
+						context.Identity.AddClaim(new Claim(ClaimTypes.Email, info.email));
+						context.Identity.AddClaim(new Claim(ClaimTypes.GivenName, info.first_name));
+						context.Identity.AddClaim(new Claim(ClaimTypes.Surname, info.last_name));
+						return Task.FromResult(0);
+					}
+				}
 			};
 
 			//https://developers.facebook.com/apps/625040680953967/settings/ (GGm page on FB)
 			app.UseFacebookAuthentication(facebookOptions);
+			//question having the same problem I'm having: http://stackoverflow.com/questions/41542166/web-api-2-oauth-user-profile-information
+			//good walkthrough, it seems: http://www.zainrizvi.io/2016/03/24/create-site-with-facebook-login-using-asp.net-core/
 
 			//app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
 			//{
