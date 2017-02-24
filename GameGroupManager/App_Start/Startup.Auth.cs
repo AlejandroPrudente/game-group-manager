@@ -93,6 +93,7 @@ namespace GameGroupManager
 			});
 
 			//https://docs.microsoft.com/en-us/aspnet/identity/overview/features-api/best-practices-for-deploying-passwords-and-other-sensitive-data-to-aspnet-and-azure
+			//todo: http://stackoverflow.com/questions/13716658/how-to-delete-all-commit-history-in-github
 		}
 	}
 }
