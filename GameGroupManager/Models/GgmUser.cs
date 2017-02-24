@@ -10,7 +10,8 @@ namespace GameGroupManager.Models
 	{
 		public int Id { get; set; }
 
-		//use FluentValidation for everything? http://stackoverflow.com/questions/16678625/asp-net-mvc-4-ef5-unique-property-in-model-best-practice
+		//todo: use FluentValidation for everything? http://stackoverflow.com/questions/16678625/asp-net-mvc-4-ef5-unique-property-in-model-best-practice/16679307#16679307
+		//todo: https://github.com/JeremySkinner/FluentValidation
 		[Required]
 		[StringLength(256)]
 		[Display(Name = "Email address")]

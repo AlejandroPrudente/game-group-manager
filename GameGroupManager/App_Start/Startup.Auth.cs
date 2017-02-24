@@ -84,9 +84,8 @@ namespace GameGroupManager
 
 			//https://developers.facebook.com/apps/625040680953967/settings/ (GGm page on FB)
 			app.UseFacebookAuthentication(facebookOptions);
-			//question having the same problem I'm having: http://stackoverflow.com/questions/41542166/web-api-2-oauth-user-profile-information
-			//good walkthrough, it seems: http://www.zainrizvi.io/2016/03/24/create-site-with-facebook-login-using-asp.net-core/
 
+			//https://console.developers.google.com/apis/dashboard?project=gamegroupmanager&duration=PT1H (GGm page on Google)
 			app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
 			{
 				ClientId = ConfigurationManager.AppSettings["GoogleClientId"],
