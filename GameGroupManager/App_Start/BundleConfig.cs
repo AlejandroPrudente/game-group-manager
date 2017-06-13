@@ -24,6 +24,12 @@ namespace GameGroupManager
 					  "~/Scripts/respond.js"));
 
 			bundles.Add(new StyleBundle("~/Content/css").Include(
+				"~/Content/bootstrap/css/bootstrap.css",
+				"~/Content/font-awesome-4.7.0/css/font-awesome.css",
+				"~/Content/bootstrap-social-gh-pages/bootstrap-social.css"
+				));
+
+			bundles.Add(new StyleBundle("~/Content/css").Include(
 					  "~/Content/united.bootstrap.css",
 					  "~/Content/site.css"));
 		}

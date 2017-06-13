@@ -83,6 +83,7 @@ namespace GameGroupManager
 			};
 
 			//https://developers.facebook.com/apps/625040680953967/settings/ (GGm page on FB)
+			//see also https://developers.facebook.com/docs/facebook-login/permissions
 			app.UseFacebookAuthentication(facebookOptions);
 
 			//https://console.developers.google.com/apis/dashboard?project=gamegroupmanager&duration=PT1H (GGm page on Google)
