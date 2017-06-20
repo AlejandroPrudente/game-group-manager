@@ -1,0 +1,188 @@
+﻿
+AJAX and Json response
+https://stackoverflow.com/questions/42924318/insert-data-to-database-using-ajax-asp-net-mvc
+--
+Try this. In Client Side
+
+function save()
+{
+ $.ajax({
+            type: 'Post',
+            dataType: 'Json',
+            data: { question1: $('#question1').val(),
+                    question2: $('#question2').val(),
+                    question3: $('#question3').val(),
+                    question4: $('#question4').val(),
+                    question5: $('#question5').val(),
+                    question6: $('#question6').val(),
+                    question7: $('#question7').val(),
+                    question8: $('#question8').val(),
+                    question9: $('#question9').val(),
+                    question10: $('#question10').val()
+            },
+            url: '@Url.Action("SaveAction", "SaveController")',
+            success: function (da) {
+                if (da.Result == "Success") {
+                 alert('saved sucessfully')
+
+
+                } else {
+
+                    alert( 'Error'+ da.Message);
+                }
+            },
+            error: function (da) {
+                alert('Error');
+            }
+        });
+}
+
+In server Side
+
+[httppost]
+public ActionResult SaveAction(string question1,string question2,string question3,.....,string question10)
+{ //do something
+  return Json(new { Result = "Success", Message = "Saved Successfully" }, JsonRequestBehavior.AllowGet);
+}
+
+
+===
+
+from Affacturage
+--
+
+var loadEcheancesAnciennesPublics = function (pager, pageNumber, countPerPage) {
+	$.ajax("/api/Cessions/GetPublics" + pageNumber + "-" + countPerPage)
+        .done(function (data) {
+        	$("#table-echeancesAnciennesPublics tbody").html("");
+        	refreshPager(pager, data.length, pageNumber);
+
+        	$.each(data,
+                function (index, value) {
+                	var row = $("<tr>");
+                	row.append($("<td>").html(value.NumeroEnregistrement));
+                	row.append($("<td>").html(value.IdCession));
+                	row.append($("<td>").html(value.TypeActivity));
+                	row.append($("<td>").html(value.ReferenceAcheteur));
+                	row.append($("<td>").html(value.NomAcheteur));
+                	row.append($("<td>").html(value.NumeroPiece));
+                	$("#table-echeancesAnciennes tbody").append(row);
+                });
+        })
+        .fail(function () {
+        	$("#table-echeancesAnciennesPublics tbody").html("");
+        	refreshPager(pager, 0, pageNumber);
+        });
+};
+
+
+server side:
+
+[HttpGet]
+[Route("{pageNumber:int?}-{countPerPage?}")]
+public async Task<MvtsBalance[]> GetPublics(int pageNumber = 1, int countPerPage = 10)
+{
+	var items = await CessionManager.GetEcheancesAnciennesPublicsAsync(pageNumber, countPerPage).WithCurrentCulture();
+
+	return items.Select(MvtsBalance.ToPoco).ToArray();
+}
+
+===
+changing ddl's index does something to the data of txt
+https://stackoverflow.com/a/34048559
+--
+
+
+In Asp.Net MVC, There is no postback behaviour like you had in the web forms when a control value is changed. You can still post the form and in the action method, you may read the selected value(posted value(s)) and load the values for your text boxes and render the page again. This is complete form posting. But there are better ways to do this using ajax so user won't experience the complete page reload.
+
+What you do is, When user changes the dropdown, get the selected item value and make a call to your server to get the data you want to show in the input fields and set those.
+
+Create a viewmodel for your page.
+
+public class CreateViewModel
+{
+    public int Width { set; get; }
+    public int Height{ set; get; }
+
+    public List<SelectListItem> Widgets{ set; get; }
+
+    public int? SelectedWidget { set; get; }    
+}
+
+Now in the GET action, We will create an object of this, Initialize the Widgets property and send to the view
+
+public ActionResult Create()
+{
+  var vm=new CreateViewModel();
+  //Hard coded for demo. You may replace with data form db.
+  vm.Widgets = new List<SelectListItem>
+            {
+                new SelectListItem {Value = "1", Text = "Weather"},
+                new SelectListItem {Value = "2", Text = "Messages"}
+            };
+ return View(vm);
+}
+
+And your create view which is strongly typed to CreateViewModel
+
+@model ReplaceWithYourNamespaceHere.CreateViewModel
+@using(Html.BeginForm())
+{
+    @Html.DropDownListFor(s => s.SelectedWidget, Model.Widgets, "Select");
+
+    <div id = "editablePane" >
+         @Html.TextBoxFor(s =>s. Width,new { @class ="myEditable", disabled="disabled"})
+         @Html.TextBoxFor(s =>s. Height,new { @class ="myEditable", disabled="disabled"})
+    </div>
+}
+
+The above code will render html markup for the SELECT element and 2 input text fields for Width and Height. ( Do a "view source" on the page and see)
+
+Now we will have some jQuery code which listens to the change event of the SELECT element and reads the selected item value, Makes an ajax call to server to get the Height and Width for the selected widget.
+
+<script type="text/javascript">
+ $(function(){
+
+      $("#SelectedWidget").change(function() {
+
+            var t = $(this).val();
+
+            if (t !== "") {               
+                $.post("@Url.Action("GetDefault", "Home")?val=" + t, function(res) {
+                    if (res.Success === "true") {
+
+                      //enable the text boxes and set the value
+
+                        $("#Width").prop('disabled', false).val(res.Data.Width);
+                        $("#Height").prop('disabled', false).val(res.Data.Height);
+
+                    } else {
+                        alert("Error getting data!");
+                    }
+                });
+            } else {
+                //Let's clear the values and disable :)
+                $("input.editableItems").val('').prop('disabled', true);
+            }
+
+        });
+ });
+
+</script>
+
+We need to make sure that we have an action method called GetDetault inside the HomeController to handle the ajax call.
+
+[HttpPost]
+public ActionResult GetDefault(int? val)
+{
+    if (val != null)
+    {
+        //Values are hard coded for demo. you may replae with values 
+       // coming from your db/service based on the passed in value ( val.Value)
+
+        return Json(new { Success="true",Data = new { Width = 234, Height = 345}});
+    }
+    return Json(new { Success = "false" });
+}
+
+
