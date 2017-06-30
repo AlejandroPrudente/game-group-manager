@@ -93,9 +93,12 @@ https://stackoverflow.com/a/34048559
 --
 
 
-In Asp.Net MVC, There is no postback behaviour like you had in the web forms when a control value is changed. You can still post the form and in the action method, you may read the selected value(posted value(s)) and load the values for your text boxes and render the page again. This is complete form posting. But there are better ways to do this using ajax so user won't experience the complete page reload.
+In Asp.Net MVC, There is no postback behaviour like you had in the web forms when a control value is changed. You can still post the form
+and in the action method, you may read the selected value(posted value(s)) and load the values for your text boxes and render the page again.
+This is complete form posting. But there are better ways to do this using ajax so user won't experience the complete page reload.
 
-What you do is, When user changes the dropdown, get the selected item value and make a call to your server to get the data you want to show in the input fields and set those.
+What you do is, When user changes the dropdown, get the selected item value and make a call to your server to get the data you want to show
+in the input fields and set those.
 
 Create a viewmodel for your page.
 
@@ -136,9 +139,11 @@ And your create view which is strongly typed to CreateViewModel
     </div>
 }
 
-The above code will render html markup for the SELECT element and 2 input text fields for Width and Height. ( Do a "view source" on the page and see)
+The above code will render html markup for the SELECT element and 2 input text fields for Width and Height. ( Do a "view source" on the
+page and see)
 
-Now we will have some jQuery code which listens to the change event of the SELECT element and reads the selected item value, Makes an ajax call to server to get the Height and Width for the selected widget.
+Now we will have some jQuery code which listens to the change event of the SELECT element and reads the selected item value, Makes an
+ajax call to server to get the Height and Width for the selected widget.
 
 <script type="text/javascript">
  $(function(){
@@ -170,7 +175,7 @@ Now we will have some jQuery code which listens to the change event of the SELEC
 
 </script>
 
-We need to make sure that we have an action method called GetDetault inside the HomeController to handle the ajax call.
+We need to make sure that we have an action method called GetDefault inside the HomeController to handle the ajax call.
 
 [HttpPost]
 public ActionResult GetDefault(int? val)

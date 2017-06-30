@@ -9,7 +9,7 @@ namespace GameGroupManager.Controllers
 	[RequireHttps]
 	public class HomeController : Controller
 	{
-		public ActionResult Index()
+		public ActionResult Index()	// Index(string name, int number) to get parameters name and number passed in the query string
 		{
 			return View();
 		}
